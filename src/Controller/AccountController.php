@@ -10,14 +10,14 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @IsGranted("ROLE_USER")
  */
-class AccountController extends AbstractController
+class AccountController extends BaseController
 {
     /**
      * @Route("/account", name="app_account")
      */
     public function index(): Response
     {
-        return $this->render('account/login.html.twig', [
+        return $this->render('account/index.html.twig', [
 
         ]);
     }
