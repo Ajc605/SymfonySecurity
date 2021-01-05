@@ -30,7 +30,6 @@ class UserFixture extends BaseFixture
                $user,
                'engage'
            ));
-
            return $user;
         });
 
