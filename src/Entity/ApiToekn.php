@@ -60,4 +60,9 @@ class ApiToekn
     {
         return $this->user;
     }
+
+    public function isExpired(): bool
+    {
+        return $this->expiresAt <= new \DateTime();
+    }
 }
