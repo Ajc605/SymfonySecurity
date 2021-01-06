@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -20,6 +23,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups("main")
      */
     private $email;
 
@@ -30,6 +34,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("main")
      */
     private $firstName;
 
@@ -39,9 +44,19 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("main")
      */
     private $twitterUsername;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApiToekn::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $apiToekns;
+
+    public function __construct()
+    {
+        $this->apiToekns = new ArrayCollection();
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -140,6 +155,46 @@ class User implements UserInterface
     public function setTwitterUsername(?string $twitterUsername): self
     {
         $this->twitterUsername = $twitterUsername;
+
+        return $this;
+    }
+
+    public function getAvatarUrl(int $size = null):string
+    {
+        $url = 'https://robohash.org/'.$this->getEmail();
+        if($size){
+            $url .= sprintf('?size=%dx%d',$size, $size);
+        }
+
+        return $url;
+    }
+
+    /**
+     * @return Collection|ApiToekn[]
+     */
+    public function getApiToekns(): Collection
+    {
+        return $this->apiToekns;
+    }
+
+    public function addApiToekn(ApiToekn $apiToekn): self
+    {
+        if (!$this->apiToekns->contains($apiToekn)) {
+            $this->apiToekns[] = $apiToekn;
+            $apiToekn->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiToekn(ApiToekn $apiToekn): self
+    {
+        if ($this->apiToekns->removeElement($apiToekn)) {
+            // set the owning side to null (unless already changed)
+            if ($apiToekn->getUser() === $this) {
+                $apiToekn->setUser(null);
+            }
+        }
 
         return $this;
     }

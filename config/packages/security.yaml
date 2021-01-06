@@ -10,6 +10,10 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_ADMIN_COMMENT, ROLE_ADMIN_ARTICLE, ROLE_ALLOWED_TO_SWITCH]
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -20,12 +24,16 @@ security:
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
+                    - App\Security\ApiTokenAuthenticator
+                entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: app_logout
 
             remember_me:
                 secret:  '%kernel.secret%'
                 lifetime: 259300
+
+            switch_user: true
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
