@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -46,6 +48,16 @@ class User implements UserInterface
      * @Groups("main")
      */
     private $twitterUsername;
+
+    /**
+     * @ORM\OneToMany(targetEntity=ApiToekn::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $apiToekns;
+
+    public function __construct()
+    {
+        $this->apiToekns = new ArrayCollection();
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -156,5 +168,35 @@ class User implements UserInterface
         }
 
         return $url;
+    }
+
+    /**
+     * @return Collection|ApiToekn[]
+     */
+    public function getApiToekns(): Collection
+    {
+        return $this->apiToekns;
+    }
+
+    public function addApiToekn(ApiToekn $apiToekn): self
+    {
+        if (!$this->apiToekns->contains($apiToekn)) {
+            $this->apiToekns[] = $apiToekn;
+            $apiToekn->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiToekn(ApiToekn $apiToekn): self
+    {
+        if ($this->apiToekns->removeElement($apiToekn)) {
+            // set the owning side to null (unless already changed)
+            if ($apiToekn->getUser() === $this) {
+                $apiToekn->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
