@@ -23,7 +23,7 @@ class AccountController extends BaseController
     }
 
     /**
-     * @Route("/api/account", name="app_account")
+     * @Route("/api/account", name="api_account")
      */
     public function accountApi()
     {
