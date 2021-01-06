@@ -21,4 +21,16 @@ class AccountController extends BaseController
 
         ]);
     }
+
+    /**
+     * @Route("/api/account", name="app_account")
+     */
+    public function accountApi()
+    {
+        $user = $this->getUser();
+
+        return $this->json($user, 200, [], [
+            'groups' => ['main'],
+        ]);
+    }
 }
